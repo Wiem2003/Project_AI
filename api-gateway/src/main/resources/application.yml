@@ -1,0 +1,73 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # event-service: /api/events/**, /api/reservations/** → lb://event-service
+        - id: event-service
+          uri: lb://event-service
+          predicates:
+            - Path=/api/events/**,/api/reservations/**
+
+        # payment-service: /api/payments/** → lb://payment-service
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**,/api/notifications/**
+
+        # certificate-service: /api/certificates/** → lb://certificate-service
+        - id: certificate-service
+          uri: lb://certificate-service
+          predicates:
+            - Path=/api/certificates/**
+
+        # quiz-feedback-service: quiz/question/attempt/feedback endpoints
+        - id: quiz-feedback-service
+          uri: lb://quiz-feedback-service
+          predicates:
+            - Path=/api/quizzes/**,/api/questions/**,/api/attempts/**,/api/feedbacks/**
+
+        # ai-service: /api/ai/** → lb://ai-service
+        - id: ai-service
+          uri: lb://ai-service
+          predicates:
+            - Path=/api/ai/**,/api/chat/**,/api/quiz-generator/**,/api/feedback-analysis/**
+
+        # course-service: /api/courses/** → lb://course-service
+        - id: course-service
+          uri: lb://course-service
+          predicates:
+            - Path=/api/courses/**
+
+        # user-service: auth, users, admin user mgmt, app-pin, webauthn, oauth2 endpoints
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/auth/**,/api/users/**,/api/admin/**,/api/app-pin/**,/api/webauthn/**,/oauth2/**,/login/oauth2/**
+
+        # job-service: jobs, applications, meetings, ratings, notifications, saved jobs, cv profiles
+        - id: job-service
+          uri: lb://job-service
+          predicates:
+            - Path=/api/jobs/**,/api/applications/**,/api/meetings/**,/api/ratings/**,/api/job-notifications/**,/api/saved-jobs/**,/api/cv-profiles/**
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
