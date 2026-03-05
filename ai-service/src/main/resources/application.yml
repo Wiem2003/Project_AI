@@ -1,0 +1,42 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: ai-service
+  
+  datasource:
+    url: jdbc:mysql://ai-mysql:3306/ai_db?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+gemini:
+  api:
+    key: AIzaSyDRjSoMWQKu7htQMlG9TWTjOEU8Nc_EvGA
+    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
