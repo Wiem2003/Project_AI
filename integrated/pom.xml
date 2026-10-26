@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>pi.integrated</groupId>
+    <artifactId>integrated-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Integrated Microservices Parent</name>
+
+    <modules>
+        <module>eureka-server</module>
+        <module>api-gateway</module>
+        <module>ai-service</module>
+        <module>certificate-service</module>
+        <module>course-service</module>
+        <module>event-service</module>
+        <module>job-service</module>
+        <module>payment-service</module>
+        <module>preevaluation-service</module>
+        <module>quiz-feedback-service</module>
+        <module>user-service</module>
+    </modules>
+</project>
