@@ -1,0 +1,12 @@
+[
+  {"question": "Quand utilise-t-on le present simple ?", "expect": [{"lesson": 1, "at": 8}]},
+  {"question": "How do I form the present continuous?", "expect": [{"lesson": 1, "at": 104}]},
+  {"question": "Comment forme-t-on le present perfect ?", "expect": [{"lesson": 2, "at": 6}]},
+  {"question": "What is the difference between for and since?", "expect": [{"lesson": 2, "at": 148}]},
+  {"question": "Quel est le participe passé de write ?", "expect": [{"page": 2}]},
+  {"question": "Can I say \"I have seen him yesterday\"?", "expect": [{"lesson": 3, "at": 160}]},
+  {"question": "When should I use going to instead of will?", "expect": [{"lesson": 4, "at": 6}, {"lesson": 4, "at": 15}]},
+  {"question": "Quelle est la capitale de l'Australie ?", "outOfCourse": true},
+  {"question": "How do I form the passive voice in English?", "outOfCourse": true},
+  {"question": "Comment conjugue-t-on le futur antérieur en français ?", "outOfCourse": true}
+]

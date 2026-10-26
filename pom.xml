@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Aggregator only: lets IntelliJ / Maven import every microservice at once (open this pom.xml).
+  Each service keeps its own parent (spring-boot-starter-parent) and can still be built on its own.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>pi.integrated</groupId>
+    <artifactId>learnify-integrated</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>learnify-integrated</name>
+
+    <modules>
+        <module>eureka-server</module>
+        <module>api-gateway</module>
+        <module>user-service</module>
+        <module>course-service</module>
+        <module>payment-service</module>
+        <module>event-service</module>
+        <module>job-service</module>
+        <module>quiz-feedback-service</module>
+        <module>certificate-service</module>
+        <module>ai-service</module>
+        <module>preevaluation-service</module>
+    </modules>
+</project>
