@@ -1,0 +1,50 @@
+# Maven / Java build output
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+*.suo
+*.sw?
+
+# Frontend
+node_modules/
+.angular/
+dist/
+
+# Python (whisper script)
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Runtime-generated files
+uploads/
+docker-volumes/
+
+# Env / secrets (copy .env.example to .env)
+.env
+*.env
+!.env.example

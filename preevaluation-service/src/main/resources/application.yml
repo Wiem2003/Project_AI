@@ -1,0 +1,68 @@
+# Microservice distinct du user-service : à lancer depuis ce dossier
+# (integrated/preevaluation-service) avec :
+#   mvn spring-boot:run
+# ou sans Eureka :
+#   mvn spring-boot:run -Dspring-boot.run.profiles=local
+# Sans processus sur le port 8089, le front reçoit des erreurs sur /api/preevaluation/*.
+# Schéma SQL manuel : src/main/resources/db/mysql-preevaluation-schema.sql
+
+server:
+  port: 8089
+
+spring:
+  application:
+    name: preevaluation-service
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/learnify_english?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8&serverTimezone=UTC}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+# Aligné sur user-service (JwtUtil) — même secret pour valider le JWT émis au login.
+jwt:
+  secret: ${JWT_SECRET:learnifySecretKeyUltraLongueEtTresSecurisee!}
+
+# Groq / OpenAI (optionnel) — ne jamais committer la clé API.
+# Variables d'environnement :
+#   GROQ_API_KEY          — clé Groq (obligatoire pour Ask AI)
+#   GROQ_MODEL            — modèle de chat (défaut : openai/gpt-oss-20b)
+#   GROQ_EMBEDDING_MODEL  — modèle d'embeddings si disponible sur votre compte
+preevaluation:
+  ai:
+    provider: groq
+    api-key: ${GROQ_API_KEY:}
+    base-url:
+    model: ${GROQ_MODEL:openai/gpt-oss-20b}
+    embedding-model: ${GROQ_EMBEDDING_MODEL:nomic-embed-text-v1_5}
+  rag:
+    enabled: true
+    top-k: 4
+    min-score: 0.12
+    index-on-startup: true
+    embedding-batch-size: 16
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

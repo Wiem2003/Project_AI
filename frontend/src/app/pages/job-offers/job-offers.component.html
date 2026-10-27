@@ -1,0 +1,271 @@
+<app-navbar></app-navbar>
+
+<section class="job-board">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="board-header">
+      <div>
+        <h1 class="board-title">
+          <i class="ti ti-briefcase"></i> Job Board
+        </h1>
+        <p class="board-subtitle">Tutor opportunities matched to your profile</p>
+      </div>
+      <div class="board-actions">
+        <button class="btn-ai-consultant" (click)="toggleChat()">
+          <i class="ti ti-robot"></i> Conseiller IA Offres
+        </button>
+        <a routerLink="/" class="btn-link">
+          <i class="ti ti-arrow-left"></i> Home
+        </a>
+        <a href="/auth/login?role=candidate" class="btn-cta" *ngIf="!isCandidate">
+          Sign in to Apply
+        </a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <div class="search-input">
+        <i class="ti ti-search"></i>
+        <input type="text" placeholder="Search jobs..." [(ngModel)]="searchTerm" (input)="applyFilters()">
+      </div>
+      <input type="text" placeholder="Location..." [(ngModel)]="locationFilter" (input)="applyFilters()" class="filter-input">
+      <input type="text" placeholder="Subject..." [(ngModel)]="subjectFilter" (input)="applyFilters()" class="filter-input">
+    </div>
+
+    <!-- Loading / Error -->
+    <div *ngIf="loading" class="state-box">
+      <i class="ti ti-loader-2 spin"></i>
+      <p>Loading jobs...</p>
+    </div>
+    <div *ngIf="error && !loading" class="state-box error">
+      <i class="ti ti-alert-circle"></i>
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Jobs Grid -->
+    <div class="jobs-grid" *ngIf="!loading && !error">
+      <div class="job-card" *ngFor="let job of filtered">
+        <div class="job-card-top">
+          <div class="job-meta">
+            <span class="job-status" [attr.data-status]="job.status">{{ job.status }}</span>
+            <span *ngIf="job.matchScore != null" class="match-score">
+              <i class="ti ti-target"></i> {{ job.matchScore }}% match
+            </span>
+          </div>
+          <button class="save-btn" (click)="toggleSave(job)" [title]="isSaved(job.id) ? 'Unsave' : 'Save'">
+            <i [class]="isSaved(job.id) ? 'ti ti-bookmark-filled' : 'ti ti-bookmark'"></i>
+          </button>
+        </div>
+
+        <h3 class="job-title">{{ job.title }}</h3>
+        <div class="job-tags">
+          <span class="tag"><i class="ti ti-map-pin"></i> {{ job.location }}</span>
+          <span class="tag"><i class="ti ti-school"></i> {{ job.subject }}</span>
+          <span class="tag"><i class="ti ti-currency-dollar"></i> {{ job.salaryMin | number }} – {{ job.salaryMax | number }} TND</span>
+        </div>
+        <p class="job-desc">{{ job.description | slice:0:120 }}{{ (job.description?.length || 0) > 120 ? '...' : '' }}</p>
+
+        <div class="job-card-footer">
+          <span class="posted-date">
+            <i class="ti ti-clock"></i> Expires {{ job.expiresAt | date:'mediumDate' }}
+          </span>
+          <div class="card-actions">
+            <button class="btn-secondary" (click)="openDetail(job)">
+              <i class="ti ti-eye"></i> View
+            </button>
+            <button class="btn-primary" (click)="openApply(job)" *ngIf="isCandidate">
+              <i class="ti ti-send"></i> Apply
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-board" *ngIf="filtered.length === 0">
+        <i class="ti ti-briefcase-off"></i>
+        <p>No jobs match your search.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Detail Modal -->
+@if (showDetailModal && detailJob) {
+  <div class="modal-overlay" (click)="closeDetail()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ detailJob.title }}</h2>
+        <button class="modal-close" (click)="closeDetail()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-tags">
+          <span class="tag"><i class="ti ti-map-pin"></i> {{ detailJob.location }}</span>
+          <span class="tag"><i class="ti ti-school"></i> {{ detailJob.subject }}</span>
+          <span class="tag"><i class="ti ti-currency-dollar"></i> {{ detailJob.salaryMin | number }} – {{ detailJob.salaryMax | number }} TND</span>
+        </div>
+        <p class="detail-desc">{{ detailJob.description }}</p>
+        <div class="detail-meta">
+          <span><strong>Status:</strong> {{ detailJob.status }}</span>
+          <span><strong>Expires:</strong> {{ detailJob.expiresAt | date:'medium' }}</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeDetail()">Close</button>
+        <button class="btn-primary" (click)="closeDetail(); openApply(detailJob)" *ngIf="isCandidate">
+          <i class="ti ti-send"></i> Apply Now
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Apply Modal -->
+@if (showApplyModal && applyJob) {
+  <div class="modal-overlay" (click)="closeApply()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2><i class="ti ti-send"></i> Apply: {{ applyJob.title }}</h2>
+        <button class="modal-close" (click)="closeApply()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Cover Letter</label>
+          <textarea [(ngModel)]="coverLetter" rows="5" placeholder="Tell us why you're a great fit..." class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Upload CV (PDF)</label>
+          <div class="file-upload">
+            <input type="file" accept=".pdf" (change)="onFileChange($event)" id="cvFile">
+            <label for="cvFile" class="file-label">
+              <i class="ti ti-file-upload"></i>
+              {{ cvFile ? cvFile.name : 'Choose PDF file...' }}
+            </label>
+          </div>
+        </div>
+        @if (applySuccess) {
+          <div class="alert success"><i class="ti ti-check-circle"></i> {{ applySuccess }}</div>
+        }
+        @if (applyError) {
+          <div class="alert error"><i class="ti ti-alert-circle"></i> {{ applyError }}</div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeApply()">Cancel</button>
+        <button class="btn-primary" (click)="submitApply()" [disabled]="applying || !cvFile">
+          <i class="ti ti-check"></i> {{ applying ? 'Submitting...' : 'Submit Application' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Floating Chat Widget -->
+<div class="rag-chat-fab" (click)="toggleChat()" title="Discuter avec le conseiller IA">
+  <i class="ti ti-messages" *ngIf="!showChat"></i>
+  <i class="ti ti-x" *ngIf="showChat"></i>
+</div>
+
+<!-- Chat Window -->
+<div class="rag-chat-window" *ngIf="showChat">
+  <div class="rag-chat-header">
+    <div class="rag-chat-title">
+      <i class="ti ti-robot"></i>
+      <span>Conseiller IA Recrutement</span>
+    </div>
+    <div class="rag-header-actions">
+      <button class="rag-profile-btn" (click)="toggleProfileConfig()" title="Personnaliser mon profil candidat">
+        <i class="ti ti-user-cog"></i> Profil
+      </button>
+      <button class="rag-chat-close" (click)="toggleChat()"><i class="ti ti-x"></i></button>
+    </div>
+  </div>
+
+  <!-- Profile Config Drawer / Overlay -->
+  <div class="rag-profile-drawer" *ngIf="showProfileConfig">
+    <div class="drawer-header">
+      <h4><i class="ti ti-user-check"></i> Mon profil de candidat</h4>
+      <button (click)="toggleProfileConfig()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="drawer-body">
+      <div class="field">
+        <label>Poste recherché</label>
+        <input type="text" [(ngModel)]="candidateProfile.targetRole" placeholder="Ex: Professeur d'anglais, Formateur FLE" />
+      </div>
+      <div class="field">
+        <label>Ville souhaitée</label>
+        <input type="text" [(ngModel)]="candidateProfile.city" placeholder="Ex: Tunis, Sousse, À distance" />
+      </div>
+      <div class="field">
+        <label>Expérience</label>
+        <input type="text" [(ngModel)]="candidateProfile.experience" placeholder="Ex: 2 ans d'enseignement, débutant..." />
+      </div>
+      <div class="field">
+        <label>Compétences clés</label>
+        <input type="text" [(ngModel)]="candidateProfile.skills" placeholder="Ex: IELTS, Grammaire, Enfants, Niveau B2/C1" />
+      </div>
+      <button class="btn-save-profile" (click)="toggleProfileConfig(); requestPersonalizedRecommendations()">
+        <i class="ti ti-sparkles"></i> Lancer la recommandation IA
+      </button>
+    </div>
+  </div>
+
+  <div class="rag-chat-body">
+    <div *ngFor="let msg of chatMessages" [ngClass]="['chat-bubble', msg.sender]">
+      <div class="bubble-text" style="white-space: pre-wrap;">{{ msg.text }}</div>
+      
+      <!-- Matched job chips if present -->
+      <div class="matched-chips" *ngIf="msg.matchedJobs && msg.matchedJobs.length > 0">
+        <span class="chip-label">Postes recommandés :</span>
+        <div class="chip-item" *ngFor="let mj of msg.matchedJobs" (click)="openDetail(mj)">
+          <i class="ti ti-briefcase"></i> {{ mj.title }} • {{ mj.location }}
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="chatLoading" class="chat-bubble bot">
+      <div class="bubble-text typing">
+        <i class="ti ti-loader-2 spin"></i> Recherche des meilleures offres en cours...
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected File Preview -->
+  <div class="rag-attachment-preview" *ngIf="chatAttachment">
+    <div class="file-info">
+      <i class="ti ti-file-text"></i>
+      <span class="file-name">{{ chatAttachment.name }}</span>
+    </div>
+    <button class="btn-remove-attachment" (click)="removeChatAttachment()" title="Supprimer la pièce jointe">
+      <i class="ti ti-x"></i>
+    </button>
+  </div>
+
+  <div class="rag-chat-footer">
+    <label class="btn-attach" title="Joindre un CV ou diplôme (Image / PDF / Scan) pour analyse OCR">
+      <i class="ti ti-paperclip"></i>
+      <input type="file" (change)="onChatFileSelected($event)" accept="image/*,.pdf" style="display: none;" [disabled]="chatLoading || isRecording" />
+    </label>
+    <button
+      class="btn-mic"
+      [class.recording]="isRecording"
+      (click)="toggleVoiceRecording()"
+      [title]="isRecording ? 'Arrêter et transcrire avec Whisper' : 'Parler au microphone (Whisper local)'"
+      [disabled]="chatLoading"
+    >
+      <i [class]="isRecording ? 'ti ti-player-stop spin' : 'ti ti-microphone'"></i>
+    </button>
+    <input
+      type="text"
+      [(ngModel)]="chatQuestion"
+      (keydown.enter)="sendChatMessage()"
+      [placeholder]="isRecording ? 'Enregistrement de votre voix en cours...' : 'Posez votre question ou parlez...'"
+      [disabled]="chatLoading || isRecording"
+    />
+    <button (click)="sendChatMessage()" [disabled]="chatLoading || isRecording || (!chatQuestion.trim() && !chatAttachment)">
+      <i class="ti ti-send"></i>
+    </button>
+  </div>
+</div>
+
+<app-footer></app-footer>

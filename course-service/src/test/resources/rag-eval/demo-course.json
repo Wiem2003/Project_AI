@@ -1,0 +1,64 @@
+{
+  "title": "English Tenses – B1",
+  "description": "This B1 course reviews the main English tenses: present simple and continuous, present perfect, past simple and the future with will and going to.",
+  "lessons": [
+    {
+      "id": 101,
+      "title": "Present simple vs present continuous",
+      "description": "Habits and general truths versus actions happening now.",
+      "segments": [
+        {"start": 0, "end": 8, "text": "Hello and welcome to the first lesson of this course on English tenses."},
+        {"start": 8, "end": 15, "text": "We use the present simple for habits, routines and general truths."},
+        {"start": 15, "end": 24, "text": "For example: I drink coffee every morning, and water boils at one hundred degrees."},
+        {"start": 24, "end": 32, "text": "With he, she and it we add an s to the verb: she works, he plays."},
+        {"start": 95, "end": 104, "text": "The present continuous describes an action happening now, at the moment of speaking."},
+        {"start": 104, "end": 113, "text": "It is formed with am, is or are plus the verb ending in ing: I am reading."},
+        {"start": 113, "end": 122, "text": "Stative verbs like know, like and want are not normally used in the continuous form."}
+      ]
+    },
+    {
+      "id": 102,
+      "title": "Present perfect",
+      "description": "Form and uses of the present perfect, for and since, ever and never.",
+      "segments": [
+        {"start": 0, "end": 6, "text": "In this lesson we study the present perfect."},
+        {"start": 6, "end": 14, "text": "The present perfect is formed with have or has plus the past participle."},
+        {"start": 14, "end": 22, "text": "We use it for life experiences without a specific time: I have visited Japan twice."},
+        {"start": 140, "end": 148, "text": "With for and since we talk about a duration that continues until now."},
+        {"start": 148, "end": 158, "text": "For is followed by a period of time, like for ten years; since is followed by a starting point, like since 2019."},
+        {"start": 230, "end": 240, "text": "Ever and never are common in questions and negatives: Have you ever eaten sushi? I have never seen snow."}
+      ]
+    },
+    {
+      "id": 103,
+      "title": "Past simple",
+      "description": "Finished actions in the past, regular and irregular verbs.",
+      "segments": [
+        {"start": 0, "end": 7, "text": "Now let us look at the past simple."},
+        {"start": 7, "end": 16, "text": "We use the past simple for finished actions at a specific time in the past, like yesterday or last week."},
+        {"start": 16, "end": 22, "text": "Regular verbs take ed: worked, played, visited."},
+        {"start": 80, "end": 88, "text": "Many common verbs are irregular, for example go becomes went and see becomes saw."},
+        {"start": 160, "end": 172, "text": "A common mistake is to use the present perfect with a finished time expression: say I saw him yesterday, not I have seen him yesterday."}
+      ]
+    },
+    {
+      "id": 104,
+      "title": "Future: will and going to",
+      "description": "Decisions, predictions, plans and intentions.",
+      "segments": [
+        {"start": 0, "end": 6, "text": "This lesson is about talking about the future."},
+        {"start": 6, "end": 15, "text": "We use will for decisions made at the moment of speaking and for predictions without evidence."},
+        {"start": 15, "end": 24, "text": "We use going to for plans and intentions decided before speaking: I am going to study medicine."},
+        {"start": 75, "end": 84, "text": "Going to is also used for predictions based on present evidence: look at those clouds, it is going to rain."}
+      ]
+    }
+  ],
+  "pdf": {
+    "documentId": 7,
+    "filename": "tenses-handout.pdf",
+    "pages": [
+      {"page": 1, "text": "English Tenses B1 handout. Contents: present simple, present continuous, present perfect, past simple, future forms."},
+      {"page": 2, "text": "Irregular verbs table. Base form, past simple, past participle: go went gone; see saw seen; write wrote written; eat ate eaten; take took taken."}
+    ]
+  }
+}

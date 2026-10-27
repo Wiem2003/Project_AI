@@ -1,0 +1,120 @@
+<app-navbar></app-navbar>
+
+<div class="result-container" *ngIf="!loading && attempt">
+  <div class="container py-5">
+    <div class="result-card">
+      <!-- Result Badge -->
+      <div class="result-badge" [class.passed]="attempt.passed" [class.failed]="!attempt.passed">
+        <div class="badge-icon">
+          <i class="bi" [class.bi-check-circle-fill]="attempt.passed" [class.bi-x-circle-fill]="!attempt.passed"></i>
+        </div>
+        <h1 class="badge-title">{{ attempt.passed ? 'Réussi' : 'Échoué' }}</h1>
+      </div>
+
+      <!-- Score Display -->
+      <div class="score-display">
+        <div class="score-main">
+          <span class="score-value">{{ attempt.score }}</span>
+          <span class="score-separator">/</span>
+          <span class="score-total">{{ attempt.totalPoints }}</span>
+        </div>
+        <div class="score-percentage">{{ getPercentage() | number:'1.1-1' }}%</div>
+      </div>
+
+      <!-- Message -->
+      <p class="result-message" *ngIf="attempt.message">{{ attempt.message }}</p>
+
+      <!-- Stats -->
+      <div class="result-stats">
+        <div class="stat-item">
+          <i class="bi bi-clock"></i>
+          <span>{{ attempt.timeSpentMinutes || 0 }} minutes</span>
+        </div>
+        <div class="stat-item">
+          <i class="bi bi-calendar"></i>
+          <span>{{ attempt.completedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+
+      <!-- Question-by-question review -->
+      <div class="review-section" *ngIf="review.length > 0">
+        <h3 class="review-title">
+          <i class="bi bi-list-check"></i> Correction
+          <span class="review-summary">{{ review.length - wrongCount }} / {{ review.length }} bonnes réponses</span>
+        </h3>
+
+        <div class="review-item" *ngFor="let item of review; let i = index"
+             [class.correct]="item.correct" [class.wrong]="!item.correct">
+          <div class="review-question">
+            <i class="bi" [class.bi-check-circle-fill]="item.correct" [class.bi-x-circle-fill]="!item.correct"></i>
+            <span><strong>{{ i + 1 }}.</strong> {{ item.question.questionText }}</span>
+          </div>
+
+          <div class="review-answers" *ngIf="!item.correct">
+            <div><span class="label">Votre réponse :</span> {{ item.given || '(pas de réponse)' }}</div>
+            <div><span class="label">Bonne réponse :</span> <strong>{{ item.question.correctAnswer }}</strong></div>
+            <div class="review-explanation" *ngIf="item.question.explanation">{{ item.question.explanation }}</div>
+
+            <!-- Course passage the question comes from (quizzes generated from a lesson) -->
+            <div class="review-source" *ngIf="item.question.sourceExcerpt">
+              <div class="source-header">
+                <i class="bi bi-bookmark"></i> Revoir dans le cours : <strong>{{ item.question.sourceLabel }}</strong>
+              </div>
+              <blockquote>« {{ item.question.sourceExcerpt }} »</blockquote>
+              <button type="button" class="btn-source" *ngIf="item.question.sourceUrl?.startsWith('/courses/')"
+                      (click)="openSource(item.question.sourceUrl!)">
+                <i class="bi bi-play-circle"></i> Voir ce passage de la vidéo
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-download" (click)="exportToPDF()" [disabled]="!quiz || questions.length === 0">
+          <i class="bi bi-download"></i>
+          Télécharger PDF
+        </button>
+        
+        <button class="btn btn-retry" (click)="tryAgain()">
+          <i class="bi bi-arrow-clockwise"></i>
+          {{ attempt.passed ? 'Refaire le Quiz' : 'Réessayer' }}
+        </button>
+        
+        <button class="btn btn-feedback" (click)="giveFeedback()">
+          <i class="bi bi-chat-left-text"></i>
+          Donner un Feedback
+        </button>
+        
+        <button class="btn btn-back" (click)="goToQuizList()">
+          <i class="bi bi-arrow-left"></i>
+          Retour aux Quizzes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="loading">
+  <div class="spinner-border text-success" role="status">
+    <span class="visually-hidden">Chargement...</span>
+  </div>
+  <p>Chargement des résultats...</p>
+</div>
+
+<!-- Error State -->
+<div class="error-container" *ngIf="!loading && !attempt">
+  <div class="container py-5 text-center">
+    <i class="bi bi-exclamation-triangle error-icon"></i>
+    <h2>Résultat introuvable</h2>
+    <p>Les résultats de cette tentative n'ont pas pu être chargés.</p>
+    <button class="btn btn-back" (click)="goToQuizList()">
+      <i class="bi bi-arrow-left"></i>
+      Retour aux Quizzes
+    </button>
+  </div>
+</div>
+
+<app-footer></app-footer>
